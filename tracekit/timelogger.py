@@ -50,9 +50,7 @@ class TimeLogger:
         self._is_shell = any(
             arg in sys.argv for arg in ("shell", "shell_plus"))
 
-    # ------------------------------------------------------------------
     def log(self, message: str = ""):
-        """Record a timing checkpoint. Skips if below *min_time*."""
         if not self.url:
             return
 
@@ -109,9 +107,7 @@ class TimeLogger:
             if self._is_shell:
                 print(f"[tracekit] log error: {exc}")
 
-    # ------------------------------------------------------------------
     def save(self, user_id, request_id):
-        """Bulk-write collected checkpoints to the database."""
         if not self.url or not self._logs:
             return
         try:
@@ -123,15 +119,10 @@ class TimeLogger:
             if self._is_shell:
                 print(f"[tracekit] save error: {exc}")
 
-    # ------------------------------------------------------------------
     def _emit_query_marker(
         self, message, func_name, filename, line_no,
         delta_step, cpu_delta_step,
     ):
-        """
-        Execute a dummy SELECT so the checkpoint shows up in the SQL
-        query log alongside the real queries it's interleaved with.
-        """
         from django.db import connections
         from tracekit.settings import get_setting
 

@@ -94,43 +94,6 @@ Checkpoints are bulk-written to `RequestTimeLog` at the end of the request. If T
 | `time_log_min_time` | `10` | Min step duration (ms) to record |
 | `time_log_start` / `time_log_end` | `null` | Time window (server-local). Both must be set. |
 
-### Log Rotation
-| Field | Default | Description |
-|---|---|---|
-| `log_rotation_enabled` | `False` | Enable automatic purging of old records |
-
-## Log rotation
-
-Schedule the purge command to run daily:
-
-```bash
-# cron
-30 5 * * * /path/to/python manage.py tracekit_purge_logs
-
-# or with Celery beat
-CELERY_BEAT_SCHEDULE = {
-    'tracekit-purge-logs': {
-        'task': 'tracekit.tasks.purge_logs',
-        'schedule': crontab(hour=5, minute=30),
-    },
-}
-```
-
-The command reads `log_rotation_enabled` from RuntimeConfig. It deletes `APILog`, `RequestTimeLog`, and `APIQueryLog` records older than the retention period in batches. Use `--days` and `--batch-size` CLI flags to customize (defaults: 3 days, 10000 rows per batch).
-
-```bash
-# Override config from CLI
-python manage.py tracekit_purge_logs --days 7 --batch-size 5000
-
-# Dry run — see what would be deleted
-python manage.py tracekit_purge_logs --dry-run
-
-# Run even if rotation is disabled in config
-python manage.py tracekit_purge_logs --force --days 1
-```
-
-If `log_rotation_enabled` is `False` (default), all data stays in one table forever — no purging happens.
-
 ## Settings
 
 Optional overrides in your Django settings:

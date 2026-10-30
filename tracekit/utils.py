@@ -1,6 +1,6 @@
 import re
 import uuid
-
+from django.http import HttpRequest
 from tracekit.settings import get_setting
 
 
@@ -8,7 +8,7 @@ def normalize_url(path: str) -> str:
     return re.sub(r"/\d+(?=/|$)", "/id", path)
 
 
-def get_client_ip(request) -> str:
+def get_client_ip(request: HttpRequest) -> str:
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
         parts = x_forwarded_for.split(",")

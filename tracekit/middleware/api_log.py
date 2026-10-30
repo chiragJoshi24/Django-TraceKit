@@ -10,6 +10,9 @@ import threading
 import time
 import traceback
 
+from django.utils import timezone
+
+from tracekit.buffer import BufferManager
 from tracekit.config import get_config
 from tracekit.models import APILog
 from tracekit.settings import get_setting
@@ -74,7 +77,8 @@ class APILogMiddleware:
                 response_body = response.content.decode("utf-8", errors="replace")
                 response_headers = dict(response.headers)
 
-            APILog.objects.create(
+            now = timezone.now()
+            BufferManager().get("api_log").add(APILog(
                 request_id=get_request_id(request),
                 user_id=user_id,
                 method=request.method,
@@ -93,7 +97,9 @@ class APILogMiddleware:
                 pod_ip=self.pod_ip,
                 process_id=self.process_id,
                 thread_id=threading.get_ident(),
-            )
+                created_at=now,
+                created_at_ymd=now.date(),
+            ))
         except Exception:
             logger.debug("tracekit APILog error", exc_info=True)
 

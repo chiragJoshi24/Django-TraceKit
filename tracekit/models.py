@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.utils import timezone
 
 
 class RuntimeConfig(models.Model):
@@ -61,11 +62,6 @@ class RuntimeConfig(models.Model):
         null=True, blank=True,
         help_text="Time-window end (server-local time)."
     )
-
-    log_rotation_enabled = models.BooleanField(
-        default=False,
-        help_text="Enable automatic purging of old log records."
-    )
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -108,7 +104,8 @@ class APILog(models.Model):
     pod_ip = models.CharField(max_length=50, blank=True, default="")
     process_id = models.IntegerField(null=True, blank=True)
     thread_id = models.BigIntegerField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    # Not auto_now_add: rows are buffered, so the timestamp is set at request time.
+    created_at = models.DateTimeField(default=timezone.now)
     # Indexing a datetime field can be expensive, so we also store the date separately for easier querying and partitioning.
     created_at_ymd = models.DateField(
         db_index=True, help_text="Date for easy querying and partitioning."

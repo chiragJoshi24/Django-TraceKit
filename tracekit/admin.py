@@ -33,11 +33,6 @@ class RuntimeConfigAdmin(admin.ModelAdmin):
                 "time_log_end",
             ),
         }),
-        ("Log Rotation", {
-            "fields": (
-                "log_rotation_enabled",
-            ),
-        }),
     )
 
     def has_add_permission(self, request):

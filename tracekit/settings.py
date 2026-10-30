@@ -27,6 +27,11 @@ DEFAULTS = {
     "CONFIG_CACHE_KEY": "tracekit:config",
     "CONFIG_CACHE_TIMEOUT": 300,  # seconds
     "CONFIG_CACHE_ALIAS": "default",
+
+    # Seconds between background flushes of buffered logs to the database.
+    "BUFFER_FLUSH_INTERVAL": 5,
+    # Max entries held per buffer; new entries are dropped once full.
+    "BUFFER_MAX_SIZE": 10000,
 }
 
 
